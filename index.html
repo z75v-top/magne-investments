@@ -1,110 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>magne - Fake Investment</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #1e1e2f;
-      color: #f0f0f0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
-      min-height: 100vh;
-      margin: 0;
-    }
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      color: #61dafb;
-    }
-    form {
-      background: #292a44;
-      padding: 1.5rem 2rem;
-      border-radius: 8px;
-      width: 320px;
-      box-shadow: 0 0 15px rgba(97, 218, 251, 0.3);
-    }
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
-    input[type="text"],
-    input[type="number"] {
-      width: 100%;
-      padding: 0.6rem;
-      margin-bottom: 1.2rem;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-    button {
-      width: 100%;
-      background: #61dafb;
-      border: none;
-      padding: 0.75rem;
-      border-radius: 4px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      color: #1e1e2f;
-    }
-    button:hover {
-      background: #21a1f1;
-    }
-    .message {
-      margin-top: 1rem;
-      padding: 1rem;
-      background: #2ecc71;
-      border-radius: 6px;
-      color: white;
-      font-weight: 700;
-      text-align: center;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>magne Idle Investment</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121829;
+    color: #eee;
+    margin: 0; padding: 2rem;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  h1 {
+    color: #61dafb;
+    margin-bottom: 1rem;
+  }
+  .stats, .actions {
+    background: #1f2433;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    margin: 1rem 0;
+    width: 350px;
+    box-shadow: 0 0 15px rgba(97, 218, 251, 0.4);
+  }
+  .stats div {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+  }
+  button {
+    background: #61dafb;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #121829;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    width: 100%;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: #21a1f1;
+  }
+  input[type="number"] {
+    width: 100%;
+    padding: 0.6rem;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: none;
+  }
+  label {
+    font-weight: 600;
+  }
+</style>
 </head>
 <body>
 
-  <h1>magne</h1>
+  <h1>magne - Idle Investment</h1>
 
-  <form id="investmentForm">
-    <label for="buyerName">Your Name</label>
-    <input type="text" id="buyerName" name="buyerName" required placeholder="Enter your name" />
+  <div class="stats">
+    <div><strong>Cash:</strong> $<span id="cash">50000</span></div>
+    <div><strong>Shares Owned:</strong> <span id="shares">0</span></div>
+    <div><strong>Stock Price:</strong> $<span id="price">100.00</span></div>
+    <div><strong>Portfolio Value:</strong> $<span id="portfolio">50000.00</span></div>
+  </div>
 
-    <label for="amount">Investment Amount ($)</label>
-    <input type="number" id="amount" name="amount" min="1" required placeholder="Enter amount" />
+  <div class="actions">
+    <button id="clickIncomeBtn">Click to earn +$1</button>
 
-    <button type="submit">Fake Buy Investment</button>
-  </form>
+    <label for="buyAmount">Amount to invest ($):</label>
+    <input type="number" id="buyAmount" min="1" placeholder="Enter amount to invest" />
 
-  <div id="message" class="message" style="display:none;"></div>
+    <button id="buySharesBtn">Buy Shares</button>
+  </div>
 
-  <script>
-    const form = document.getElementById('investmentForm');
-    const messageDiv = document.getElementById('message');
+<script>
+  let cash = 50000;
+  let shares = 0;
+  let price = 100;
 
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
+  const cashEl = document.getElementById('cash');
+  const sharesEl = document.getElementById('shares');
+  const priceEl = document.getElementById('price');
+  const portfolioEl = document.getElementById('portfolio');
 
-      const name = form.buyerName.value.trim();
-      const amount = form.amount.value;
+  const clickIncomeBtn = document.getElementById('clickIncomeBtn');
+  const buySharesBtn = document.getElementById('buySharesBtn');
+  const buyAmountInput = document.getElementById('buyAmount');
 
-      if(name && amount > 0){
-        messageDiv.style.display = 'block';
-        messageDiv.textContent = `Thank you, ${name}! Your fake investment of $${amount} in Magne has been recorded.`;
-        form.reset();
-      } else {
-        messageDiv.style.display = 'block';
-        messageDiv.textContent = 'Please enter valid information.';
-        messageDiv.style.backgroundColor = '#e74c3c';
-      }
-    });
-  </script>
+  function updateDisplay() {
+    cashEl.textContent = cash.toFixed(2);
+    sharesEl.textContent = shares.toFixed(4);
+    priceEl.textContent = price.toFixed(2);
+    const portfolioValue = cash + shares * price;
+    portfolioEl.textContent = portfolioValue.toFixed(2);
+  }
+
+  // Clicking gives +1 cash
+  clickIncomeBtn.addEventListener('click', () => {
+    cash += 1;
+    updateDisplay();
+  });
+
+  // Buy shares if enough cash
+  buySharesBtn.addEventListener('click', () => {
+    const amountToInvest = parseFloat(buyAmountInput.value);
+    if (!amountToInvest || amountToInvest <= 0) {
+      alert('Enter a valid amount to invest.');
+      return;
+    }
+    if (amountToInvest > cash) {
+      alert("You don't have enough cash!");
+      return;
+    }
+    const sharesBought = amountToInvest / price;
+    shares += sharesBought;
+    cash -= amountToInvest;
+    buyAmountInput.value = '';
+    updateDisplay();
+  });
+
+  // Simulate stock price changes every 3 seconds
+  function fluctuatePrice() {
+    // Change price by -5% to +5%
+    const changePercent = (Math.random() * 10) - 5;
+    price = Math.max(1, price * (1 + changePercent / 100));
+    updateDisplay();
+  }
+
+  setInterval(fluctuatePrice, 3000);
+
+  // Initialize display
+  updateDisplay();
+</script>
 
 </body>
 </html>
