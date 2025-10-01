@@ -222,4 +222,342 @@
   <div class="actions">
     <button id="clickIncomeBtn">Click for at få +$1</button>
 
-    <label for
+    <label for="buyAmount">Mængde af aktier på køb ($):</label>
+    <input type="number" id="buyAmount" min="1" placeholder="Indtast beløb til køb" />
+
+    <button id="buySharesBtn">Køb aktier</button>
+
+    <label for="sellAmount">Mængde aktier til at sælge ($):</label>
+    <input type="number" id="sellAmount" min="1" placeholder="Indtast beløb til salg" />
+
+    <button id="sellSharesBtn">Sælg aktier</button>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="priceChart" width="400" height="200"></canvas>
+  </div>
+
+  <div class="games">
+    <h2>Møntkast (Coinflip)</h2>
+    <label for="coinAmount">Indsats ($):</label>
+    <input type="number" id="coinAmount" min="1" placeholder="Indsæt beløb" />
+    <label for="coinChoice">Vælg:</label>
+    <select id="coinChoice">
+      <option value="krone">Krone</option>
+      <option value="plat">Plat</option>
+    </select>
+    <button id="coinflipBtn">Kast Mønt</button>
+
+    <div class="coin-container">
+      <div id="coin" class="coin">
+        <div class="side heads">Krone</div>
+        <div class="side tails">Plat</div>
+      </div>
+    </div>
+    <div id="coinResult" class="result"></div>
+  </div>
+
+  <div class="games">
+    <h2>Roulette</h2>
+    <label for="rouletteAmount">Indsats ($):</label>
+    <input type="number" id="rouletteAmount" min="1" placeholder="Indsæt beløb" />
+    <label for="rouletteChoice">Vælg nummer (0-36):</label>
+    <input type="number" id="rouletteChoice" min="0" max="36" placeholder="Vælg nummer" />
+    <button id="rouletteBtn">Spin Roulette</button>
+
+    <div class="roulette-pointer"></div>
+    <div class="roulette-container">
+      <div id="rouletteWheel" class="roulette-wheel"></div>
+    </div>
+    <div id="rouletteResult" class="result"></div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  let cash = 1000;
+  let shares = 0;
+  let price = 100;
+  const maxHistoryLength = 50;
+  let priceHistory = [];
+
+  const cashEl = document.getElementById('cash');
+  const sharesEl = document.getElementById('shares');
+  const priceEl = document.getElementById('price');
+  const portfolioEl = document.getElementById('portfolio');
+
+  const clickIncomeBtn = document.getElementById('clickIncomeBtn');
+  const buySharesBtn = document.getElementById('buySharesBtn');
+  const sellSharesBtn = document.getElementById('sellSharesBtn');
+  const buyAmountInput = document.getElementById('buyAmount');
+  const sellAmountInput = document.getElementById('sellAmount');
+
+  // Game elements
+  const coinAmountInput = document.getElementById('coinAmount');
+  const coinChoiceSelect = document.getElementById('coinChoice');
+  const coinflipBtn = document.getElementById('coinflipBtn');
+  const coinResultDiv = document.getElementById('coinResult');
+  const coinEl = document.getElementById('coin');
+
+  const rouletteAmountInput = document.getElementById('rouletteAmount');
+  const rouletteChoiceInput = document.getElementById('rouletteChoice');
+  const rouletteBtn = document.getElementById('rouletteBtn');
+  const rouletteResultDiv = document.getElementById('rouletteResult');
+  const rouletteWheel = document.getElementById('rouletteWheel');
+
+  // Chart.js setup
+  const ctx = document.getElementById('priceChart').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Magne Aktie Pris',
+        data: [],
+        borderColor: '#61dafb',
+        backgroundColor: 'rgba(97, 218, 251, 0.2)',
+        tension: 0.3,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      animation: false,
+      scales: {
+        x: {
+          display: false
+        },
+        y: {
+          beginAtZero: false,
+          min: 0
+        }
+      },
+      plugins: {
+        legend: {display: false}
+      },
+      responsive: false,
+      maintainAspectRatio: false
+    }
+  });
+
+  // Initialize price history with initial price
+  priceHistory.push(price);
+  updateChart();
+  updateDisplay();
+
+  function updateChart() {
+    chart.data.labels = priceHistory.map((_, i) => i);
+    chart.data.datasets[0].data = priceHistory;
+    chart.update();
+  }
+
+  function updateDisplay() {
+    cashEl.textContent = cash.toFixed(2);
+    sharesEl.textContent = shares.toFixed(4);
+    priceEl.textContent = price.toFixed(2);
+    const portfolioValue = cash + shares * price;
+    portfolioEl.textContent = portfolioValue.toFixed(2);
+  }
+
+  function fluctuatePrice() {
+    if (Math.random() < 0.05) {  // 5% chance big change
+      const upOrDown = Math.random() < 0.5 ? 1 : -1;
+      price = Math.max(1, price * (1 + upOrDown * 0.25));
+    } else {
+      const normalChangePercent = (Math.random() * 10) - 5;
+      price = Math.max(1, price * (1 + normalChangePercent / 100));
+    }
+    priceHistory.push(price);
+    if(priceHistory.length > maxHistoryLength) priceHistory.shift();
+    updateChart();
+    updateDisplay();
+  }
+
+  // Auto price fluctuation every 3 seconds
+  setInterval(fluctuatePrice, 3000);
+
+  clickIncomeBtn.addEventListener('click', (e) => {
+    cash += 1;
+    updateDisplay();
+
+    const plus = document.createElement('div');
+    plus.textContent = '+1';
+    plus.className = 'floating-plus';
+    const rect = clickIncomeBtn.getBoundingClientRect();
+    plus.style.left = `${e.clientX - rect.left}px`;
+    plus.style.top = `${e.clientY - rect.top}px`;
+    clickIncomeBtn.appendChild(plus);
+    setTimeout(() => plus.remove(), 1000);
+  });
+
+  buySharesBtn.addEventListener('click', () => {
+    const amountToInvest = parseFloat(buyAmountInput.value);
+    if (!amountToInvest || amountToInvest <= 0) {
+      alert('Indtast et gyldigt beløb til køb.');
+      return;
+    }
+    if (amountToInvest > cash) {
+      alert("Du har ikke nok penge!");
+      return;
+    }
+    const sharesBought = amountToInvest / price;
+    shares += sharesBought;
+    cash -= amountToInvest;
+    buyAmountInput.value = '';
+    updateDisplay();
+  });
+
+  sellSharesBtn.addEventListener('click', () => {
+    const amountToSell = parseFloat(sellAmountInput.value);
+    if (!amountToSell || amountToSell <= 0) {
+      alert('Skriv en rigtig mængde at sælge.');
+      return;
+    }
+    const sharesToSell = amountToSell / price;
+    if (sharesToSell > shares) {
+      alert("Du har ikke så mange aktier!");
+      return;
+    }
+    shares -= sharesToSell;
+    cash += amountToSell;
+    sellAmountInput.value = '';
+    updateDisplay();
+  });
+
+  // --- Coinflip Logic ---
+  coinflipBtn.addEventListener('click', () => {
+    let bet = parseFloat(coinAmountInput.value);
+    if (!bet || bet <= 0) {
+      alert('Indtast et gyldigt indsatsbeløb.');
+      return;
+    }
+    if (bet > cash) {
+      alert('Du har ikke nok penge!');
+      return;
+    }
+    const userChoice = coinChoiceSelect.value; // 'krone' or 'plat'
+
+    // Disable button while flipping
+    coinflipBtn.disabled = true;
+    coinResultDiv.textContent = 'Mønten kaster...';
+
+    // Reset coin rotation
+    coinEl.style.transition = 'none';
+    coinEl.style.transform = 'rotateY(0deg)';
+    
+    // Start flip animation: multiple spins + land on result
+    // We'll do 3 spins (1080deg) plus 0deg for heads, 180deg for tails
+
+    const flipCount = 3;
+    const baseRotation = flipCount * 360;
+
+    // Decide result randomly
+    const flipResult = Math.random() < 0.5 ? 'krone' : 'plat';
+
+    // Rotation degree to land on result
+    let finalRotation = baseRotation;
+    if (flipResult === 'plat') finalRotation += 180;
+
+    // Small timeout to let transition none apply before animating
+    setTimeout(() => {
+      coinEl.style.transition = 'transform 3s cubic-bezier(0.4, 0, 0.2, 1)';
+      coinEl.style.transform = `rotateY(${finalRotation}deg)`;
+    }, 20);
+
+    // After animation ends (3s), show result
+    setTimeout(() => {
+      if (flipResult === userChoice) {
+        cash += bet; // Win same amount (double return)
+        coinResultDiv.textContent = `Du vandt! Mønten landede på ${flipResult}. Du får $${bet.toFixed(2)}.`;
+      } else {
+        cash -= bet;
+        coinResultDiv.textContent = `Du tabte. Mønten landede på ${flipResult}. Du mistede $${bet.toFixed(2)}.`;
+      }
+      updateDisplay();
+      coinflipBtn.disabled = false;
+    }, 3100);
+  });
+
+  // --- Roulette Logic ---
+
+  // Put numbers 0-36 evenly spaced on roulette wheel
+  function drawRouletteNumbers() {
+    // Clear existing numbers
+    rouletteWheel.innerHTML = '';
+    const radius = 90;
+    for(let i=0; i<=36; i++) {
+      const angle = (360 / 37) * i;
+      const span = document.createElement('div');
+      span.className = 'roulette-number';
+      span.textContent = i;
+      span.style.transform = `rotate(${angle}deg) translate(-50%, -${radius}px) rotate(-${angle}deg)`;
+      rouletteWheel.appendChild(span);
+    }
+  }
+  drawRouletteNumbers();
+
+  let spinning = false;
+
+  rouletteBtn.addEventListener('click', () => {
+    if (spinning) return;
+    let bet = parseFloat(rouletteAmountInput.value);
+    if (!bet || bet <= 0) {
+      alert('Indtast et gyldigt indsatsbeløb.');
+      return;
+    }
+    if (bet > cash) {
+      alert('Du har ikke nok penge!');
+      return;
+    }
+    let chosenNum = parseInt(rouletteChoiceInput.value);
+    if (isNaN(chosenNum) || chosenNum < 0 || chosenNum > 36) {
+      alert('Vælg et nummer mellem 0 og 36.');
+      return;
+    }
+    spinning = true;
+    rouletteBtn.disabled = true;
+    rouletteResultDiv.textContent = 'Roulette spinner...';
+
+    // Spin the wheel: do multiple rotations + land on number
+
+    // Calculate angle per number: 360 / 37
+    const anglePerNum = 360 / 37;
+    // The wheel rotates CCW, but to land chosen number at pointer top,
+    // final rotation is 360 * spins + offset to chosenNum angle
+    // We want chosen number at pointer which is at 0deg on screen,
+    // so we rotate wheel so chosen number aligns with pointer.
+
+    // Random spins 5-8
+    const spins = Math.floor(Math.random() * 4) + 5;
+
+    // Random winning number (0-36)
+    const winningNum = Math.floor(Math.random() * 37);
+
+    // Compute rotation degrees
+    // Because pointer is fixed at top, we rotate wheel negatively so winning number aligns at top.
+    let finalDeg = spins * 360 + (37 - winningNum) * anglePerNum;
+
+    rouletteWheel.style.transition = 'none';
+    rouletteWheel.style.transform = 'rotate(0deg)';
+
+    // Small delay before animating
+    setTimeout(() => {
+      rouletteWheel.style.transition = 'transform 4s cubic-bezier(0.33, 1, 0.68, 1)';
+      rouletteWheel.style.transform = `rotate(${finalDeg}deg)`;
+    }, 20);
+
+    setTimeout(() => {
+      if (winningNum === chosenNum) {
+        cash += bet * 35;
+        rouletteResultDiv.textContent = `Du vandt! Nummeret var ${winningNum}. Du får $${(bet*35).toFixed(2)}!`;
+      } else {
+        cash -= bet;
+        rouletteResultDiv.textContent = `Du tabte. Nummeret var ${winningNum}. Du mistede $${bet.toFixed(2)}.`;
+      }
+      updateDisplay();
+      spinning = false;
+      rouletteBtn.disabled = false;
+    }, 4100);
+  });
+</script>
+
+</body>
+</html>
