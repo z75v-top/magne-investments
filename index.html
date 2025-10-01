@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>magne - Idle Investment</title>
+<title>Magne - Investeringer</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap');
   body {
@@ -93,24 +93,24 @@
   <h1>magne - Idle Investment</h1>
 
   <div class="stats">
-    <div><strong>Cash:</strong> $<span id="cash">1000.00</span></div>
-    <div><strong>Shares Owned:</strong> <span id="shares">0.0000</span></div>
-    <div><strong>Stock Price:</strong> $<span id="price">100.00</span></div>
-    <div><strong>Portfolio Value:</strong> $<span id="portfolio">1000.00</span></div>
+    <div><strong>Penge:</strong> $<span id="cash">1000.00</span></div>
+    <div><strong>Mængde Aktier:</strong> <span id="shares">0.0000</span></div>
+    <div><strong>Aktie Priser:</strong> $<span id="price">100.00</span></div>
+    <div><strong>Portfolie pris:</strong> $<span id="portfolio">1000.00</span></div>
   </div>
 
   <div class="actions">
-    <button id="clickIncomeBtn">Click to earn +$1</button>
+    <button id="clickIncomeBtn">Click for at få +$1</button>
 
-    <label for="buyAmount">Amount to invest ($):</label>
+    <label for="buyAmount">Mængde af aktier på køb ($):</label>
     <input type="number" id="buyAmount" min="1" placeholder="Enter amount to invest" />
 
-    <button id="buySharesBtn">Buy Shares</button>
+    <button id="buySharesBtn">Køb aktier</button>
 
-    <label for="sellAmount">Amount to sell ($):</label>
+    <label for="sellAmount">Mængde aktier til at sælge ($):</label>
     <input type="number" id="sellAmount" min="1" placeholder="Enter amount to sell" />
 
-    <button id="sellSharesBtn">Sell Shares</button>
+    <button id="sellSharesBtn">Sælg aktier</button>
   </div>
 
   <div class="chart-container">
@@ -143,7 +143,7 @@
     data: {
       labels: [],
       datasets: [{
-        label: 'Magne Stock Price',
+        label: 'Magne Aktie Pris',
         data: [],
         borderColor: '#61dafb',
         backgroundColor: 'rgba(97, 218, 251, 0.2)',
@@ -239,13 +239,13 @@ function fluctuatePrice() {
   sellSharesBtn.addEventListener('click', () => {
     const amountToSell = parseFloat(sellAmountInput.value);
     if (!amountToSell || amountToSell <= 0) {
-      alert('Enter a valid amount to sell.');
+      alert('Skriv en rigtig mængde at sælge.');
       return;
     }
     // Calculate max sellable cash from shares
     const maxSellableCash = shares * price;
     if (amountToSell > maxSellableCash) {
-      alert("You don't have that many shares to sell!");
+      alert("Du har ikke så mange aktier at sælge!");
       return;
     }
     const sharesSold = amountToSell / price;
