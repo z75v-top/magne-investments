@@ -91,6 +91,121 @@
     font-weight: 600;
     min-height: 1.3rem;
   }
+  /* Coinflip styles */
+  .coin-container {
+    margin: 1rem 0;
+    text-align: center;
+    position: relative;
+    height: 100px;
+  }
+  .coin {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #ccc, #eee);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    transform-style: preserve-3d;
+    transition: transform 3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .coin .side {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    user-select: none;
+  }
+  .coin .heads {
+    background: linear-gradient(135deg, #ffeb3b, #fbc02d);
+  }
+  .coin .tails {
+    background: linear-gradient(135deg, #90caf9, #42a5f5);
+    transform: rotateY(180deg);
+  }
+  /* Roulette styles */
+  .roulette-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 1rem auto;
+  }
+  .roulette-wheel {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 5px solid #61dafb;
+    background: conic-gradient(
+      #21a1f1 0deg 9.73deg,
+      #121829 9.73deg 19.46deg,
+      #21a1f1 19.46deg 29.19deg,
+      #121829 29.19deg 38.92deg,
+      #21a1f1 38.92deg 48.65deg,
+      #121829 48.65deg 58.38deg,
+      #21a1f1 58.38deg 68.11deg,
+      #121829 68.11deg 77.84deg,
+      #21a1f1 77.84deg 87.57deg,
+      #121829 87.57deg 97.3deg,
+      #21a1f1 97.3deg 107.03deg,
+      #121829 107.03deg 116.76deg,
+      #21a1f1 116.76deg 126.49deg,
+      #121829 126.49deg 136.22deg,
+      #21a1f1 136.22deg 145.95deg,
+      #121829 145.95deg 155.68deg,
+      #21a1f1 155.68deg 165.41deg,
+      #121829 165.41deg 175.14deg,
+      #21a1f1 175.14deg 184.87deg,
+      #121829 184.87deg 194.6deg,
+      #21a1f1 194.6deg 204.33deg,
+      #121829 204.33deg 214.06deg,
+      #21a1f1 214.06deg 223.79deg,
+      #121829 223.79deg 233.52deg,
+      #21a1f1 233.52deg 243.25deg,
+      #121829 243.25deg 252.98deg,
+      #21a1f1 252.98deg 262.71deg,
+      #121829 262.71deg 272.44deg,
+      #21a1f1 272.44deg 282.17deg,
+      #121829 282.17deg 291.9deg,
+      #21a1f1 291.9deg 301.63deg,
+      #121829 301.63deg 311.36deg,
+      #21a1f1 311.36deg 321.09deg,
+      #121829 321.09deg 330.82deg,
+      #21a1f1 330.82deg 340.55deg,
+      #121829 340.55deg 350.28deg,
+      #21a1f1 350.28deg 360deg
+    );
+    position: relative;
+    transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  .roulette-number {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    color: #eee;
+    text-align: center;
+    transform-origin: 50% 100%;
+    top: 10px;
+    left: 50%;
+    user-select: none;
+  }
+  .roulette-pointer {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 25px solid #61dafb;
+    margin: 0 auto 10px;
+  }
 </style>
 </head>
 <body>
@@ -107,173 +222,4 @@
   <div class="actions">
     <button id="clickIncomeBtn">Click for at få +$1</button>
 
-    <label for="buyAmount">Mængde af aktier på køb ($):</label>
-    <input type="number" id="buyAmount" min="1" placeholder="Indtast beløb til køb" />
-
-    <button id="buySharesBtn">Køb aktier</button>
-
-    <label for="sellAmount">Mængde aktier til at sælge ($):</label>
-    <input type="number" id="sellAmount" min="1" placeholder="Indtast beløb til salg" />
-
-    <button id="sellSharesBtn">Sælg aktier</button>
-  </div>
-
-  <div class="chart-container">
-    <canvas id="priceChart" width="400" height="200"></canvas>
-  </div>
-
-  <div class="games">
-    <h2>Møntkast (Coinflip)</h2>
-    <label for="coinAmount">Indsats ($):</label>
-    <input type="number" id="coinAmount" min="1" placeholder="Indsæt beløb" />
-    <label for="coinChoice">Vælg:</label>
-    <select id="coinChoice">
-      <option value="krone">Krone</option>
-      <option value="plat">Plat</option>
-    </select>
-    <button id="coinflipBtn">Kast Mønt</button>
-    <div id="coinResult" class="result"></div>
-  </div>
-
-  <div class="games">
-    <h2>Roulette</h2>
-    <label for="rouletteAmount">Indsats ($):</label>
-    <input type="number" id="rouletteAmount" min="1" placeholder="Indsæt beløb" />
-    <label for="rouletteChoice">Vælg nummer (0-36):</label>
-    <input type="number" id="rouletteChoice" min="0" max="36" placeholder="Vælg nummer" />
-    <button id="rouletteBtn">Spin Roulette</button>
-    <div id="rouletteResult" class="result"></div>
-  </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  let cash = 1000;
-  let shares = 0;
-  let price = 100;
-  const maxHistoryLength = 50;
-  let priceHistory = [];
-
-  const cashEl = document.getElementById('cash');
-  const sharesEl = document.getElementById('shares');
-  const priceEl = document.getElementById('price');
-  const portfolioEl = document.getElementById('portfolio');
-
-  const clickIncomeBtn = document.getElementById('clickIncomeBtn');
-  const buySharesBtn = document.getElementById('buySharesBtn');
-  const sellSharesBtn = document.getElementById('sellSharesBtn');
-  const buyAmountInput = document.getElementById('buyAmount');
-  const sellAmountInput = document.getElementById('sellAmount');
-
-  // Game elements
-  const coinAmountInput = document.getElementById('coinAmount');
-  const coinChoiceSelect = document.getElementById('coinChoice');
-  const coinflipBtn = document.getElementById('coinflipBtn');
-  const coinResultDiv = document.getElementById('coinResult');
-
-  const rouletteAmountInput = document.getElementById('rouletteAmount');
-  const rouletteChoiceInput = document.getElementById('rouletteChoice');
-  const rouletteBtn = document.getElementById('rouletteBtn');
-  const rouletteResultDiv = document.getElementById('rouletteResult');
-
-  // Chart.js setup
-  const ctx = document.getElementById('priceChart').getContext('2d');
-  const chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: [],
-      datasets: [{
-        label: 'Magne Aktie Pris',
-        data: [],
-        borderColor: '#61dafb',
-        backgroundColor: 'rgba(97, 218, 251, 0.2)',
-        tension: 0.3,
-        pointRadius: 0
-      }]
-    },
-    options: {
-      animation: false,
-      scales: {
-        x: {
-          display: false
-        },
-        y: {
-          beginAtZero: false,
-          min: 0
-        }
-      },
-      plugins: {
-        legend: {display: false}
-      },
-      responsive: false,
-      maintainAspectRatio: false
-    }
-  });
-
-  function updateChart() {
-    chart.data.labels = priceHistory.map((_, i) => i);
-    chart.data.datasets[0].data = priceHistory;
-    chart.update();
-  }
-
-  function updateDisplay() {
-    cashEl.textContent = cash.toFixed(2);
-    sharesEl.textContent = shares.toFixed(4);
-    priceEl.textContent = price.toFixed(2);
-    const portfolioValue = cash + shares * price;
-    portfolioEl.textContent = portfolioValue.toFixed(2);
-  }
-
-  function fluctuatePrice() {
-    if (Math.random() < 0.05) {  // 5% chance
-      // Decide randomly if price goes up or down by 25%
-      const upOrDown = Math.random() < 0.5 ? 1 : -1; // 50/50 chance
-      price = Math.max(1, price * (1 + upOrDown * 0.25));
-    } else {
-      // Normal fluctuation ±5%
-      const normalChangePercent = (Math.random() * 10) - 5;
-      price = Math.max(1, price * (1 + normalChangePercent / 100));
-    }
-    
-    priceHistory.push(price);
-    if(priceHistory.length > maxHistoryLength) priceHistory.shift();
-    updateChart();
-    updateDisplay();
-  }
-
-  clickIncomeBtn.addEventListener('click', (e) => {
-    cash += 1;
-    updateDisplay();
-
-    // Create floating +1 effect
-    const plus = document.createElement('div');
-    plus.textContent = '+1';
-    plus.className = 'floating-plus';
-    const rect = clickIncomeBtn.getBoundingClientRect();
-    plus.style.left = `${e.clientX - rect.left}px`;
-    plus.style.top = `${e.clientY - rect.top}px`;
-    clickIncomeBtn.appendChild(plus);
-
-    setTimeout(() => plus.remove(), 1000);
-  });
-
-  buySharesBtn.addEventListener('click', () => {
-    const amountToInvest = parseFloat(buyAmountInput.value);
-    if (!amountToInvest || amountToInvest <= 0) {
-      alert('Indtast et gyldigt beløb til køb.');
-      return;
-    }
-    if (amountToInvest > cash) {
-      alert("Du har ikke nok penge!");
-      return;
-    }
-    const sharesBought = amountToInvest / price;
-    shares += sharesBought;
-    cash -= amountToInvest;
-    buyAmountInput.value = '';
-    updateDisplay();
-  });
-
-  sellSharesBtn.addEventListener('click', () => {
-    const amountToSell = parseFloat(sellAmountInput.value);
-    if (!amountToSell || amountToSell <= 0) {
-      alert('Skriv en rigtig mængde at sæ
+    <label for
