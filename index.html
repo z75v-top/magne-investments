@@ -188,7 +188,7 @@ function fluctuatePrice() {
   if (Math.random() < 0.05) {  // 5% chance
     // Decide randomly if price goes up or down by 25%
     const upOrDown = Math.random() < 0.5 ? 1 : -1; // 50/50 chance
-    price = Math.max(1, price * (1 + upOrDown * 0.25));
+    price = Math.max(1, price * (1 + upOrDown * 0.75));
   } else {
     // Normal fluctuation ±5%
     const normalChangePercent = (Math.random() * 10) - 5;
