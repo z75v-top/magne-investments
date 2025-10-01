@@ -20,8 +20,9 @@
   h1 {
     color: #61dafb;
     margin-bottom: 1rem;
+    text-transform: capitalize;
   }
-  .stats, .actions, .chart-container, .games {
+  .stats, .actions, .chart-container, .games-container {
     background: #1f2433;
     padding: 1rem 2rem;
     border-radius: 10px;
@@ -36,7 +37,7 @@
   label {
     font-weight: 600;
   }
-  input[type="number"], select {
+  input[type="number"] {
     width: 100%;
     padding: 0.6rem;
     margin-top: 0.3rem;
@@ -56,6 +57,7 @@
     cursor: pointer;
     width: 100%;
     transition: background 0.3s ease;
+    margin-top: 0.3rem;
   }
   button:hover {
     background: #21a1f1;
@@ -86,125 +88,102 @@
     background: #121829;
     border-radius: 8px;
   }
-  .result {
-    margin-top: 0.5rem;
-    font-weight: 600;
-    min-height: 1.3rem;
-  }
   /* Coinflip styles */
-  .coin-container {
-    margin: 1rem 0;
+  .coinflip-result {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #61dafb;
+    margin-top: 0.7rem;
+    min-height: 1.4em;
     text-align: center;
-    position: relative;
-    height: 100px;
-  }
-  .coin {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto;
-    border-radius: 50%;
-    background: linear-gradient(145deg, #ccc, #eee);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-    position: relative;
-    cursor: pointer;
-    user-select: none;
-    transform-style: preserve-3d;
-    transition: transform 3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .coin .side {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    backface-visibility: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    user-select: none;
-  }
-  .coin .heads {
-    background: linear-gradient(135deg, #ffeb3b, #fbc02d);
-  }
-  .coin .tails {
-    background: linear-gradient(135deg, #90caf9, #42a5f5);
-    transform: rotateY(180deg);
   }
   /* Roulette styles */
   .roulette-container {
     position: relative;
     width: 200px;
     height: 200px;
-    margin: 1rem auto;
+    margin: 0 auto;
   }
   .roulette-wheel {
+    position: relative;
     width: 200px;
     height: 200px;
     border-radius: 50%;
-    border: 5px solid #61dafb;
+    border: 6px solid #61dafb;
     background: conic-gradient(
-      #21a1f1 0deg 9.73deg,
-      #121829 9.73deg 19.46deg,
-      #21a1f1 19.46deg 29.19deg,
-      #121829 29.19deg 38.92deg,
-      #21a1f1 38.92deg 48.65deg,
-      #121829 48.65deg 58.38deg,
-      #21a1f1 58.38deg 68.11deg,
-      #121829 68.11deg 77.84deg,
-      #21a1f1 77.84deg 87.57deg,
-      #121829 87.57deg 97.3deg,
-      #21a1f1 97.3deg 107.03deg,
-      #121829 107.03deg 116.76deg,
-      #21a1f1 116.76deg 126.49deg,
-      #121829 126.49deg 136.22deg,
-      #21a1f1 136.22deg 145.95deg,
-      #121829 145.95deg 155.68deg,
-      #21a1f1 155.68deg 165.41deg,
-      #121829 165.41deg 175.14deg,
-      #21a1f1 175.14deg 184.87deg,
-      #121829 184.87deg 194.6deg,
-      #21a1f1 194.6deg 204.33deg,
-      #121829 204.33deg 214.06deg,
-      #21a1f1 214.06deg 223.79deg,
-      #121829 223.79deg 233.52deg,
-      #21a1f1 233.52deg 243.25deg,
-      #121829 243.25deg 252.98deg,
-      #21a1f1 252.98deg 262.71deg,
-      #121829 262.71deg 272.44deg,
-      #21a1f1 272.44deg 282.17deg,
-      #121829 282.17deg 291.9deg,
-      #21a1f1 291.9deg 301.63deg,
-      #121829 301.63deg 311.36deg,
-      #21a1f1 311.36deg 321.09deg,
-      #121829 321.09deg 330.82deg,
-      #21a1f1 330.82deg 340.55deg,
-      #121829 340.55deg 350.28deg,
-      #21a1f1 350.28deg 360deg
+      #21a1f1 0deg 9.72deg,
+      #121829 9.72deg 19.44deg,
+      #21a1f1 19.44deg 29.16deg,
+      #121829 29.16deg 38.88deg,
+      #21a1f1 38.88deg 48.6deg,
+      #121829 48.6deg 58.32deg,
+      #21a1f1 58.32deg 68.04deg,
+      #121829 68.04deg 77.76deg,
+      #21a1f1 77.76deg 87.48deg,
+      #121829 87.48deg 97.2deg,
+      #21a1f1 97.2deg 106.92deg,
+      #121829 106.92deg 116.64deg,
+      #21a1f1 116.64deg 126.36deg,
+      #121829 126.36deg 136.08deg,
+      #21a1f1 136.08deg 145.8deg,
+      #121829 145.8deg 155.52deg,
+      #21a1f1 155.52deg 165.24deg,
+      #121829 165.24deg 174.96deg,
+      #21a1f1 174.96deg 184.68deg,
+      #121829 184.68deg 194.4deg,
+      #21a1f1 194.4deg 204.12deg,
+      #121829 204.12deg 213.84deg,
+      #21a1f1 213.84deg 223.56deg,
+      #121829 223.56deg 233.28deg,
+      #21a1f1 233.28deg 243deg,
+      #121829 243deg 252.72deg,
+      #21a1f1 252.72deg 262.44deg,
+      #121829 262.44deg 272.16deg,
+      #21a1f1 272.16deg 281.88deg,
+      #121829 281.88deg 291.6deg,
+      #21a1f1 291.6deg 301.32deg,
+      #121829 301.32deg 311.04deg,
+      #21a1f1 311.04deg 320.76deg,
+      #121829 320.76deg 330.48deg,
+      #21a1f1 330.48deg 340.2deg,
+      #121829 340.2deg 349.92deg,
+      #21a1f1 349.92deg 360deg
     );
-    position: relative;
     transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  .roulette-pointer {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0; 
+    height: 0; 
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 12px solid #61dafb;
+    z-index: 10;
   }
   .roulette-number {
     position: absolute;
-    width: 20px;
-    height: 20px;
-    font-size: 0.7rem;
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
     color: #eee;
     text-align: center;
-    transform-origin: 50% 100%;
-    top: 10px;
+    top: 50%;
     left: 50%;
+    transform-origin: center center;
     user-select: none;
+    line-height: 24px;
+    font-weight: 600;
   }
-  .roulette-pointer {
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 25px solid #61dafb;
-    margin: 0 auto 10px;
+  .roulette-result {
+    margin-top: 0.7rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    color: #61dafb;
+    min-height: 1.4em;
   }
 </style>
 </head>
@@ -220,10 +199,10 @@
   </div>
 
   <div class="actions">
-    <button id="clickIncomeBtn">Click for at få +$1</button>
+    <button id="clickIncomeBtn">Klik for at få +$1</button>
 
     <label for="buyAmount">Mængde af aktier på køb ($):</label>
-    <input type="number" id="buyAmount" min="1" placeholder="Indtast beløb til køb" />
+    <input type="number" id="buyAmount" min="1" placeholder="Indtast beløb til investering" />
 
     <button id="buySharesBtn">Køb aktier</button>
 
@@ -237,39 +216,24 @@
     <canvas id="priceChart" width="400" height="200"></canvas>
   </div>
 
-  <div class="games">
-    <h2>Møntkast (Coinflip)</h2>
-    <label for="coinAmount">Indsats ($):</label>
-    <input type="number" id="coinAmount" min="1" placeholder="Indsæt beløb" />
-    <label for="coinChoice">Vælg:</label>
-    <select id="coinChoice">
-      <option value="krone">Krone</option>
-      <option value="plat">Plat</option>
-    </select>
-    <button id="coinflipBtn">Kast Mønt</button>
+  <div class="games-container">
+    <h2>Morgen Spil</h2>
 
-    <div class="coin-container">
-      <div id="coin" class="coin">
-        <div class="side heads">Krone</div>
-        <div class="side tails">Plat</div>
+    <!-- Coinflip -->
+    <div class="coinflip">
+      <button id="coinflipBtn">Kast Mønt (Vind $100 eller tab $100)</button>
+      <div class="coinflip-result" id="coinflipResult"></div>
+    </div>
+
+    <!-- Roulette -->
+    <div class="roulette" style="margin-top:1.5rem;">
+      <div class="roulette-container">
+        <div class="roulette-pointer"></div>
+        <div class="roulette-wheel" id="rouletteWheel"></div>
       </div>
+      <button id="rouletteBtn" style="margin-top:1rem;">Spil Roulette (Sats $100)</button>
+      <div class="roulette-result" id="rouletteResult"></div>
     </div>
-    <div id="coinResult" class="result"></div>
-  </div>
-
-  <div class="games">
-    <h2>Roulette</h2>
-    <label for="rouletteAmount">Indsats ($):</label>
-    <input type="number" id="rouletteAmount" min="1" placeholder="Indsæt beløb" />
-    <label for="rouletteChoice">Vælg nummer (0-36):</label>
-    <input type="number" id="rouletteChoice" min="0" max="36" placeholder="Vælg nummer" />
-    <button id="rouletteBtn">Spin Roulette</button>
-
-    <div class="roulette-pointer"></div>
-    <div class="roulette-container">
-      <div id="rouletteWheel" class="roulette-wheel"></div>
-    </div>
-    <div id="rouletteResult" class="result"></div>
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -290,19 +254,6 @@
   const sellSharesBtn = document.getElementById('sellSharesBtn');
   const buyAmountInput = document.getElementById('buyAmount');
   const sellAmountInput = document.getElementById('sellAmount');
-
-  // Game elements
-  const coinAmountInput = document.getElementById('coinAmount');
-  const coinChoiceSelect = document.getElementById('coinChoice');
-  const coinflipBtn = document.getElementById('coinflipBtn');
-  const coinResultDiv = document.getElementById('coinResult');
-  const coinEl = document.getElementById('coin');
-
-  const rouletteAmountInput = document.getElementById('rouletteAmount');
-  const rouletteChoiceInput = document.getElementById('rouletteChoice');
-  const rouletteBtn = document.getElementById('rouletteBtn');
-  const rouletteResultDiv = document.getElementById('rouletteResult');
-  const rouletteWheel = document.getElementById('rouletteWheel');
 
   // Chart.js setup
   const ctx = document.getElementById('priceChart').getContext('2d');
@@ -338,11 +289,6 @@
     }
   });
 
-  // Initialize price history with initial price
-  priceHistory.push(price);
-  updateChart();
-  updateDisplay();
-
   function updateChart() {
     chart.data.labels = priceHistory.map((_, i) => i);
     chart.data.datasets[0].data = priceHistory;
@@ -358,10 +304,12 @@
   }
 
   function fluctuatePrice() {
-    if (Math.random() < 0.05) {  // 5% chance big change
+    if (Math.random() < 0.05) {  // 5% chance
+      // Decide randomly if price goes up or down by 25%
       const upOrDown = Math.random() < 0.5 ? 1 : -1;
       price = Math.max(1, price * (1 + upOrDown * 0.25));
     } else {
+      // Normal fluctuation ±5%
       const normalChangePercent = (Math.random() * 10) - 5;
       price = Math.max(1, price * (1 + normalChangePercent / 100));
     }
@@ -371,13 +319,11 @@
     updateDisplay();
   }
 
-  // Auto price fluctuation every 3 seconds
-  setInterval(fluctuatePrice, 3000);
-
   clickIncomeBtn.addEventListener('click', (e) => {
     cash += 1;
     updateDisplay();
 
+    // Create floating +1 effect
     const plus = document.createElement('div');
     plus.textContent = '+1';
     plus.className = 'floating-plus';
@@ -385,13 +331,14 @@
     plus.style.left = `${e.clientX - rect.left}px`;
     plus.style.top = `${e.clientY - rect.top}px`;
     clickIncomeBtn.appendChild(plus);
+
     setTimeout(() => plus.remove(), 1000);
   });
 
   buySharesBtn.addEventListener('click', () => {
     const amountToInvest = parseFloat(buyAmountInput.value);
     if (!amountToInvest || amountToInvest <= 0) {
-      alert('Indtast et gyldigt beløb til køb.');
+      alert('Indtast et gyldigt beløb til investering.');
       return;
     }
     if (amountToInvest > cash) {
@@ -411,153 +358,113 @@
       alert('Skriv en rigtig mængde at sælge.');
       return;
     }
-    const sharesToSell = amountToSell / price;
-    if (sharesToSell > shares) {
-      alert("Du har ikke så mange aktier!");
+    const maxSellableCash = shares * price;
+    if (amountToSell > maxSellableCash) {
+      alert("Du har ikke så mange aktier at sælge!");
       return;
     }
-    shares -= sharesToSell;
+    const sharesSold = amountToSell / price;
+    shares -= sharesSold;
     cash += amountToSell;
     sellAmountInput.value = '';
     updateDisplay();
   });
 
-  // --- Coinflip Logic ---
+  // Initialize price history with starting price
+  for(let i=0; i<maxHistoryLength; i++){
+    priceHistory.push(price);
+  }
+  updateChart();
+  updateDisplay();
+  setInterval(fluctuatePrice, 3000);
+
+  // --- Coinflip Game ---
+  const coinflipBtn = document.getElementById('coinflipBtn');
+  const coinflipResult = document.getElementById('coinflipResult');
+
   coinflipBtn.addEventListener('click', () => {
-    let bet = parseFloat(coinAmountInput.value);
-    if (!bet || bet <= 0) {
-      alert('Indtast et gyldigt indsatsbeløb.');
+    if (cash < 100) {
+      coinflipResult.textContent = 'Du har ikke nok penge til at satse $100!';
       return;
     }
-    if (bet > cash) {
-      alert('Du har ikke nok penge!');
-      return;
-    }
-    const userChoice = coinChoiceSelect.value; // 'krone' or 'plat'
+    cash -= 100;
+    updateDisplay();
+    coinflipResult.textContent = 'Kaster mønt...';
 
-    // Disable button while flipping
-    coinflipBtn.disabled = true;
-    coinResultDiv.textContent = 'Mønten kaster...';
-
-    // Reset coin rotation
-    coinEl.style.transition = 'none';
-    coinEl.style.transform = 'rotateY(0deg)';
-    
-    // Start flip animation: multiple spins + land on result
-    // We'll do 3 spins (1080deg) plus 0deg for heads, 180deg for tails
-
-    const flipCount = 3;
-    const baseRotation = flipCount * 360;
-
-    // Decide result randomly
-    const flipResult = Math.random() < 0.5 ? 'krone' : 'plat';
-
-    // Rotation degree to land on result
-    let finalRotation = baseRotation;
-    if (flipResult === 'plat') finalRotation += 180;
-
-    // Small timeout to let transition none apply before animating
     setTimeout(() => {
-      coinEl.style.transition = 'transform 3s cubic-bezier(0.4, 0, 0.2, 1)';
-      coinEl.style.transform = `rotateY(${finalRotation}deg)`;
-    }, 20);
-
-    // After animation ends (3s), show result
-    setTimeout(() => {
-      if (flipResult === userChoice) {
-        cash += bet; // Win same amount (double return)
-        coinResultDiv.textContent = `Du vandt! Mønten landede på ${flipResult}. Du får $${bet.toFixed(2)}.`;
+      const win = Math.random() < 0.5; // 50% chance
+      if (win) {
+        cash += 200; // get back your 100 + 100 winnings
+        coinflipResult.textContent = 'Du vandt $100!';
       } else {
-        cash -= bet;
-        coinResultDiv.textContent = `Du tabte. Mønten landede på ${flipResult}. Du mistede $${bet.toFixed(2)}.`;
+        coinflipResult.textContent = 'Du tabte $100.';
       }
       updateDisplay();
-      coinflipBtn.disabled = false;
-    }, 3100);
+    }, 1500);
   });
 
-  // --- Roulette Logic ---
+  // --- Roulette Game ---
+  const rouletteBtn = document.getElementById('rouletteBtn');
+  const rouletteWheel = document.getElementById('rouletteWheel');
+  const rouletteResult = document.getElementById('rouletteResult');
 
-  // Put numbers 0-36 evenly spaced on roulette wheel
   function drawRouletteNumbers() {
-    // Clear existing numbers
     rouletteWheel.innerHTML = '';
-    const radius = 90;
-    for(let i=0; i<=36; i++) {
+    const radius = 90; // distance from center to place numbers
+    for(let i = 0; i <= 36; i++) {
       const angle = (360 / 37) * i;
       const span = document.createElement('div');
       span.className = 'roulette-number';
       span.textContent = i;
-      span.style.transform = `rotate(${angle}deg) translate(-50%, -${radius}px) rotate(-${angle}deg)`;
+      span.style.transform = `
+        rotate(${angle}deg)
+        translate(${radius}px)
+        rotate(-${angle}deg)
+        translate(-50%, -50%)
+      `;
       rouletteWheel.appendChild(span);
     }
   }
+
   drawRouletteNumbers();
 
-  let spinning = false;
-
   rouletteBtn.addEventListener('click', () => {
-    if (spinning) return;
-    let bet = parseFloat(rouletteAmountInput.value);
-    if (!bet || bet <= 0) {
-      alert('Indtast et gyldigt indsatsbeløb.');
+    if (cash < 100) {
+      rouletteResult.textContent = 'Du har ikke nok penge til at satse $100!';
       return;
     }
-    if (bet > cash) {
-      alert('Du har ikke nok penge!');
-      return;
-    }
-    let chosenNum = parseInt(rouletteChoiceInput.value);
-    if (isNaN(chosenNum) || chosenNum < 0 || chosenNum > 36) {
-      alert('Vælg et nummer mellem 0 og 36.');
-      return;
-    }
-    spinning = true;
-    rouletteBtn.disabled = true;
-    rouletteResultDiv.textContent = 'Roulette spinner...';
+    cash -= 100;
+    updateDisplay();
+    rouletteResult.textContent = 'Spinner hjulet...';
 
-    // Spin the wheel: do multiple rotations + land on number
+    // Spin degrees (random 3-6 full spins + random offset)
+    const spins = Math.floor(Math.random() * 3) + 3; // 3 to 5 spins
+    const randomOffset = Math.floor(Math.random() * 360);
+    const totalRotation = spins * 360 + randomOffset;
 
-    // Calculate angle per number: 360 / 37
-    const anglePerNum = 360 / 37;
-    // The wheel rotates CCW, but to land chosen number at pointer top,
-    // final rotation is 360 * spins + offset to chosenNum angle
-    // We want chosen number at pointer which is at 0deg on screen,
-    // so we rotate wheel so chosen number aligns with pointer.
+    // Animate spin
+    rouletteWheel.style.transition = 'transform 4s cubic-bezier(0.33, 1, 0.68, 1)';
+    rouletteWheel.style.transform = `rotate(${totalRotation}deg)`;
 
-    // Random spins 5-8
-    const spins = Math.floor(Math.random() * 4) + 5;
-
-    // Random winning number (0-36)
-    const winningNum = Math.floor(Math.random() * 37);
-
-    // Compute rotation degrees
-    // Because pointer is fixed at top, we rotate wheel negatively so winning number aligns at top.
-    let finalDeg = spins * 360 + (37 - winningNum) * anglePerNum;
-
-    rouletteWheel.style.transition = 'none';
-    rouletteWheel.style.transform = 'rotate(0deg)';
-
-    // Small delay before animating
+    // After animation ends, calculate result
     setTimeout(() => {
-      rouletteWheel.style.transition = 'transform 4s cubic-bezier(0.33, 1, 0.68, 1)';
-      rouletteWheel.style.transform = `rotate(${finalDeg}deg)`;
-    }, 20);
+      // Normalize rotation to [0, 360)
+      const normalized = totalRotation % 360;
+      // Each number segment covers about 360/37 degrees ≈ 9.73°
+      // Calculate number index (inverted because wheel rotation is clockwise)
+      const segmentAngle = 360 / 37;
+      let index = Math.floor((360 - normalized) / segmentAngle);
+      if(index === 37) index = 0;
 
-    setTimeout(() => {
-      if (winningNum === chosenNum) {
-        cash += bet * 35;
-        rouletteResultDiv.textContent = `Du vandt! Nummeret var ${winningNum}. Du får $${(bet*35).toFixed(2)}!`;
+      // Result number
+      const number = index;
+
+      // Determine payout (win if number is even and not zero)
+      if (number !== 0 && number % 2 === 0) {
+        cash += 300; // win $200 net (bet 100, win 300)
+        rouletteResult.textContent = `Du vandt! Nummer ${number} er lige! +$200`;
       } else {
-        cash -= bet;
-        rouletteResultDiv.textContent = `Du tabte. Nummeret var ${winningNum}. Du mistede $${bet.toFixed(2)}.`;
+        rouletteResult.textContent = `Du tabte! Nummer ${number} er ulige eller nul.`;
       }
       updateDisplay();
-      spinning = false;
-      rouletteBtn.disabled = false;
-    }, 4100);
-  });
-</script>
-
-</body>
-</html>
+      // Reset wheel rotation for
