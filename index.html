@@ -3,30 +3,47 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>magne Idle Investment</title>
+<title>magne - Idle Investment</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap');
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #121829;
     color: #eee;
-    margin: 0; padding: 2rem;
-    display: flex; flex-direction: column; align-items: center;
+    margin: 0;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
   }
   h1 {
     color: #61dafb;
     margin-bottom: 1rem;
   }
-  .stats, .actions {
+  .stats, .actions, .chart-container {
     background: #1f2433;
     padding: 1rem 2rem;
     border-radius: 10px;
     margin: 1rem 0;
-    width: 350px;
+    width: 400px;
     box-shadow: 0 0 15px rgba(97, 218, 251, 0.4);
   }
   .stats div {
     margin-bottom: 0.5rem;
     font-size: 1.1rem;
+  }
+  label {
+    font-weight: 600;
+  }
+  input[type="number"] {
+    width: 100%;
+    padding: 0.6rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0.7rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: none;
   }
   button {
     background: #61dafb;
@@ -37,23 +54,37 @@
     font-size: 1rem;
     color: #121829;
     cursor: pointer;
-    margin-top: 0.5rem;
     width: 100%;
     transition: background 0.3s ease;
   }
   button:hover {
     background: #21a1f1;
   }
-  input[type="number"] {
-    width: 100%;
-    padding: 0.6rem;
-    margin-top: 0.5rem;
-    font-size: 1rem;
-    border-radius: 6px;
-    border: none;
+  #clickIncomeBtn {
+    position: relative;
+    overflow: visible;
   }
-  label {
-    font-weight: 600;
+  .floating-plus {
+    position: absolute;
+    font-weight: bold;
+    color: #61dafb;
+    animation: floatUp 1s ease forwards;
+    pointer-events: none;
+    user-select: none;
+  }
+  @keyframes floatUp {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-50px) scale(1.5);
+    }
+  }
+  canvas {
+    background: #121829;
+    border-radius: 8px;
   }
 </style>
 </head>
@@ -62,10 +93,10 @@
   <h1>magne - Idle Investment</h1>
 
   <div class="stats">
-    <div><strong>Cash:</strong> $<span id="cash">50000</span></div>
-    <div><strong>Shares Owned:</strong> <span id="shares">0</span></div>
+    <div><strong>Cash:</strong> $<span id="cash">1000.00</span></div>
+    <div><strong>Shares Owned:</strong> <span id="shares">0.0000</span></div>
     <div><strong>Stock Price:</strong> $<span id="price">100.00</span></div>
-    <div><strong>Portfolio Value:</strong> $<span id="portfolio">50000.00</span></div>
+    <div><strong>Portfolio Value:</strong> $<span id="portfolio">1000.00</span></div>
   </div>
 
   <div class="actions">
@@ -75,12 +106,24 @@
     <input type="number" id="buyAmount" min="1" placeholder="Enter amount to invest" />
 
     <button id="buySharesBtn">Buy Shares</button>
+
+    <label for="sellAmount">Amount to sell ($):</label>
+    <input type="number" id="sellAmount" min="1" placeholder="Enter amount to sell" />
+
+    <button id="sellSharesBtn">Sell Shares</button>
   </div>
 
+  <div class="chart-container">
+    <canvas id="priceChart" width="400" height="200"></canvas>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  let cash = 50000;
+  let cash = 1000;
   let shares = 0;
   let price = 100;
+  const maxHistoryLength = 50;
+  let priceHistory = [];
 
   const cashEl = document.getElementById('cash');
   const sharesEl = document.getElementById('shares');
@@ -89,7 +132,49 @@
 
   const clickIncomeBtn = document.getElementById('clickIncomeBtn');
   const buySharesBtn = document.getElementById('buySharesBtn');
+  const sellSharesBtn = document.getElementById('sellSharesBtn');
   const buyAmountInput = document.getElementById('buyAmount');
+  const sellAmountInput = document.getElementById('sellAmount');
+
+  // Chart.js setup
+  const ctx = document.getElementById('priceChart').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Magne Stock Price',
+        data: [],
+        borderColor: '#61dafb',
+        backgroundColor: 'rgba(97, 218, 251, 0.2)',
+        tension: 0.3,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      animation: false,
+      scales: {
+        x: {
+          display: false
+        },
+        y: {
+          beginAtZero: false,
+          min: 0
+        }
+      },
+      plugins: {
+        legend: {display: false}
+      },
+      responsive: false,
+      maintainAspectRatio: false
+    }
+  });
+
+  function updateChart() {
+    chart.data.labels = priceHistory.map((_, i) => i);
+    chart.data.datasets[0].data = priceHistory;
+    chart.update();
+  }
 
   function updateDisplay() {
     cashEl.textContent = cash.toFixed(2);
@@ -99,13 +184,33 @@
     portfolioEl.textContent = portfolioValue.toFixed(2);
   }
 
-  // Clicking gives +1 cash
-  clickIncomeBtn.addEventListener('click', () => {
+  function fluctuatePrice() {
+    // Random change between -5% and +5%
+    const changePercent = (Math.random() * 10) - 5;
+    price = Math.max(1, price * (1 + changePercent / 100));
+    priceHistory.push(price);
+    if(priceHistory.length > maxHistoryLength) priceHistory.shift();
+    updateChart();
+    updateDisplay();
+  }
+
+  clickIncomeBtn.addEventListener('click', (e) => {
     cash += 1;
     updateDisplay();
+
+    // Create floating +1 effect
+    const plus = document.createElement('div');
+    plus.textContent = '+1';
+    plus.className = 'floating-plus';
+    const rect = clickIncomeBtn.getBoundingClientRect();
+    // Position relative to button
+    plus.style.left = `${e.clientX - rect.left}px`;
+    plus.style.top = `${e.clientY - rect.top}px`;
+    clickIncomeBtn.appendChild(plus);
+
+    setTimeout(() => plus.remove(), 1000);
   });
 
-  // Buy shares if enough cash
   buySharesBtn.addEventListener('click', () => {
     const amountToInvest = parseFloat(buyAmountInput.value);
     if (!amountToInvest || amountToInvest <= 0) {
@@ -123,18 +228,32 @@
     updateDisplay();
   });
 
-  // Simulate stock price changes every 3 seconds
-  function fluctuatePrice() {
-    // Change price by -5% to +5%
-    const changePercent = (Math.random() * 10) - 5;
-    price = Math.max(1, price * (1 + changePercent / 100));
+  sellSharesBtn.addEventListener('click', () => {
+    const amountToSell = parseFloat(sellAmountInput.value);
+    if (!amountToSell || amountToSell <= 0) {
+      alert('Enter a valid amount to sell.');
+      return;
+    }
+    // Calculate max sellable cash from shares
+    const maxSellableCash = shares * price;
+    if (amountToSell > maxSellableCash) {
+      alert("You don't have that many shares to sell!");
+      return;
+    }
+    const sharesSold = amountToSell / price;
+    shares -= sharesSold;
+    cash += amountToSell;
+    sellAmountInput.value = '';
     updateDisplay();
+  });
+
+  // Initialize price history with starting price
+  for(let i=0; i<maxHistoryLength; i++){
+    priceHistory.push(price);
   }
-
-  setInterval(fluctuatePrice, 3000);
-
-  // Initialize display
+  updateChart();
   updateDisplay();
+  setInterval(fluctuatePrice, 3000);
 </script>
 
 </body>
