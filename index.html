@@ -184,15 +184,23 @@
     portfolioEl.textContent = portfolioValue.toFixed(2);
   }
 
-  function fluctuatePrice() {
-    // Random change between -5% and +5%
-    const changePercent = (Math.random() * 10) - 5;
-    price = Math.max(1, price * (1 + changePercent / 100));
-    priceHistory.push(price);
-    if(priceHistory.length > maxHistoryLength) priceHistory.shift();
-    updateChart();
-    updateDisplay();
+function fluctuatePrice() {
+  if (Math.random() < 0.05) {  // 5% chance
+    // Decide randomly if price goes up or down by 25%
+    const upOrDown = Math.random() < 0.5 ? 1 : -1; // 50/50 chance
+    price = Math.max(1, price * (1 + upOrDown * 0.25));
+  } else {
+    // Normal fluctuation ±5%
+    const normalChangePercent = (Math.random() * 10) - 5;
+    price = Math.max(1, price * (1 + normalChangePercent / 100));
   }
+  
+  priceHistory.push(price);
+  if(priceHistory.length > maxHistoryLength) priceHistory.shift();
+  updateChart();
+  updateDisplay();
+}
+
 
   clickIncomeBtn.addEventListener('click', (e) => {
     cash += 1;
