@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -21,7 +21,7 @@
     color: #61dafb;
     margin-bottom: 1rem;
   }
-  .stats, .actions, .chart-container {
+  .stats, .actions, .chart-container, .games {
     background: #1f2433;
     padding: 1rem 2rem;
     border-radius: 10px;
@@ -36,7 +36,7 @@
   label {
     font-weight: 600;
   }
-  input[type="number"] {
+  input[type="number"], select {
     width: 100%;
     padding: 0.6rem;
     margin-top: 0.3rem;
@@ -86,6 +86,11 @@
     background: #121829;
     border-radius: 8px;
   }
+  .result {
+    margin-top: 0.5rem;
+    font-weight: 600;
+    min-height: 1.3rem;
+  }
 </style>
 </head>
 <body>
@@ -103,18 +108,41 @@
     <button id="clickIncomeBtn">Click for at få +$1</button>
 
     <label for="buyAmount">Mængde af aktier på køb ($):</label>
-    <input type="number" id="buyAmount" min="1" placeholder="Enter amount to invest" />
+    <input type="number" id="buyAmount" min="1" placeholder="Indtast beløb til køb" />
 
     <button id="buySharesBtn">Køb aktier</button>
 
     <label for="sellAmount">Mængde aktier til at sælge ($):</label>
-    <input type="number" id="sellAmount" min="1" placeholder="Enter amount to sell" />
+    <input type="number" id="sellAmount" min="1" placeholder="Indtast beløb til salg" />
 
     <button id="sellSharesBtn">Sælg aktier</button>
   </div>
 
   <div class="chart-container">
     <canvas id="priceChart" width="400" height="200"></canvas>
+  </div>
+
+  <div class="games">
+    <h2>Møntkast (Coinflip)</h2>
+    <label for="coinAmount">Indsats ($):</label>
+    <input type="number" id="coinAmount" min="1" placeholder="Indsæt beløb" />
+    <label for="coinChoice">Vælg:</label>
+    <select id="coinChoice">
+      <option value="krone">Krone</option>
+      <option value="plat">Plat</option>
+    </select>
+    <button id="coinflipBtn">Kast Mønt</button>
+    <div id="coinResult" class="result"></div>
+  </div>
+
+  <div class="games">
+    <h2>Roulette</h2>
+    <label for="rouletteAmount">Indsats ($):</label>
+    <input type="number" id="rouletteAmount" min="1" placeholder="Indsæt beløb" />
+    <label for="rouletteChoice">Vælg nummer (0-36):</label>
+    <input type="number" id="rouletteChoice" min="0" max="36" placeholder="Vælg nummer" />
+    <button id="rouletteBtn">Spin Roulette</button>
+    <div id="rouletteResult" class="result"></div>
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -135,6 +163,17 @@
   const sellSharesBtn = document.getElementById('sellSharesBtn');
   const buyAmountInput = document.getElementById('buyAmount');
   const sellAmountInput = document.getElementById('sellAmount');
+
+  // Game elements
+  const coinAmountInput = document.getElementById('coinAmount');
+  const coinChoiceSelect = document.getElementById('coinChoice');
+  const coinflipBtn = document.getElementById('coinflipBtn');
+  const coinResultDiv = document.getElementById('coinResult');
+
+  const rouletteAmountInput = document.getElementById('rouletteAmount');
+  const rouletteChoiceInput = document.getElementById('rouletteChoice');
+  const rouletteBtn = document.getElementById('rouletteBtn');
+  const rouletteResultDiv = document.getElementById('rouletteResult');
 
   // Chart.js setup
   const ctx = document.getElementById('priceChart').getContext('2d');
@@ -184,23 +223,22 @@
     portfolioEl.textContent = portfolioValue.toFixed(2);
   }
 
-function fluctuatePrice() {
-  if (Math.random() < 0.05) {  // 5% chance
-    // Decide randomly if price goes up or down by 25%
-    const upOrDown = Math.random() < 0.5 ? 1 : -1; // 50/50 chance
-    price = Math.max(1, price * (1 + upOrDown * 0.75));
-  } else {
-    // Normal fluctuation ±5%
-    const normalChangePercent = (Math.random() * 10) - 5;
-    price = Math.max(1, price * (1 + normalChangePercent / 100));
+  function fluctuatePrice() {
+    if (Math.random() < 0.05) {  // 5% chance
+      // Decide randomly if price goes up or down by 25%
+      const upOrDown = Math.random() < 0.5 ? 1 : -1; // 50/50 chance
+      price = Math.max(1, price * (1 + upOrDown * 0.25));
+    } else {
+      // Normal fluctuation ±5%
+      const normalChangePercent = (Math.random() * 10) - 5;
+      price = Math.max(1, price * (1 + normalChangePercent / 100));
+    }
+    
+    priceHistory.push(price);
+    if(priceHistory.length > maxHistoryLength) priceHistory.shift();
+    updateChart();
+    updateDisplay();
   }
-  
-  priceHistory.push(price);
-  if(priceHistory.length > maxHistoryLength) priceHistory.shift();
-  updateChart();
-  updateDisplay();
-}
-
 
   clickIncomeBtn.addEventListener('click', (e) => {
     cash += 1;
@@ -211,7 +249,6 @@ function fluctuatePrice() {
     plus.textContent = '+1';
     plus.className = 'floating-plus';
     const rect = clickIncomeBtn.getBoundingClientRect();
-    // Position relative to button
     plus.style.left = `${e.clientX - rect.left}px`;
     plus.style.top = `${e.clientY - rect.top}px`;
     clickIncomeBtn.appendChild(plus);
@@ -222,11 +259,11 @@ function fluctuatePrice() {
   buySharesBtn.addEventListener('click', () => {
     const amountToInvest = parseFloat(buyAmountInput.value);
     if (!amountToInvest || amountToInvest <= 0) {
-      alert('Enter a valid amount to invest.');
+      alert('Indtast et gyldigt beløb til køb.');
       return;
     }
     if (amountToInvest > cash) {
-      alert("You don't have enough cash!");
+      alert("Du har ikke nok penge!");
       return;
     }
     const sharesBought = amountToInvest / price;
@@ -239,30 +276,4 @@ function fluctuatePrice() {
   sellSharesBtn.addEventListener('click', () => {
     const amountToSell = parseFloat(sellAmountInput.value);
     if (!amountToSell || amountToSell <= 0) {
-      alert('Skriv en rigtig mængde at sælge.');
-      return;
-    }
-    // Calculate max sellable cash from shares
-    const maxSellableCash = shares * price;
-    if (amountToSell > maxSellableCash) {
-      alert("Du har ikke så mange aktier at sælge!");
-      return;
-    }
-    const sharesSold = amountToSell / price;
-    shares -= sharesSold;
-    cash += amountToSell;
-    sellAmountInput.value = '';
-    updateDisplay();
-  });
-
-  // Initialize price history with starting price
-  for(let i=0; i<maxHistoryLength; i++){
-    priceHistory.push(price);
-  }
-  updateChart();
-  updateDisplay();
-  setInterval(fluctuatePrice, 3000);
-</script>
-
-</body>
-</html>
+      alert('Skriv en rigtig mængde at sæ
